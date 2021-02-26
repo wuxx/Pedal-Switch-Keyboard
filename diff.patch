@@ -1,0 +1,59 @@
+diff --git a/examples/device/hid_composite_freertos/src/main.c b/examples/device/hid_composite_freertos/src/main.c
+index 79dc2ec6..4d7357df 100644
+--- a/examples/device/hid_composite_freertos/src/main.c
++++ b/examples/device/hid_composite_freertos/src/main.c
+@@ -162,6 +162,29 @@ void tud_resume_cb(void)
+ //--------------------------------------------------------------------+
+ // USB HID
+ //--------------------------------------------------------------------+
++void keyboard_seq()
++{
++    uint8_t keycode[6] = { 0 };
++
++    keycode[0] = HID_KEY_ARROW_UP;
++
++    tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, keycode);
++    vTaskDelay(pdMS_TO_TICKS(10));
++
++    tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, NULL);
++    vTaskDelay(pdMS_TO_TICKS(10));
++
++    keycode[0] = HID_KEY_KEYPAD_ENTER;
++
++    tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, keycode);
++    vTaskDelay(pdMS_TO_TICKS(10));
++
++    tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, NULL);
++    vTaskDelay(pdMS_TO_TICKS(10));
++
++
++}
++
+ 
+ static void send_hid_report(uint8_t report_id, uint32_t btn)
+ {
+@@ -175,17 +198,22 @@ static void send_hid_report(uint8_t report_id, uint32_t btn)
+       // use to avoid send multiple consecutive zero report for keyboard
+       static bool has_keyboard_key = false;
+ 
+-      if ( btn )
++      if ( btn ) /* keyboard pressed */
+       {
++#if 0
+         uint8_t keycode[6] = { 0 };
+         keycode[0] = HID_KEY_A;
+ 
+         tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, keycode);
++#endif
+         has_keyboard_key = true;
+       }else
+       {
+         // send empty key report if previously has key pressed
+-        if (has_keyboard_key) tud_hid_keyboard_report(REPORT_ID_KEYBOARD, 0, NULL);
++        if (has_keyboard_key) {
++            keyboard_seq();
++        }
++
+         has_keyboard_key = false;
+       }
+     }
