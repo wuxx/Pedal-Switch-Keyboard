@@ -1,4 +1,4 @@
-###How-To-Compile-and-Flash
+### How-To-Compile-and-Flash
 ```
 
 $cd tinyusb/examples/device/hid_composite_freertos
